@@ -1,52 +1,64 @@
 import React from "react";
-import { View } from "react-native";
+import { FlatList, Image, Linking, Text } from "react-native";
 import { VStack, Box, Divider } from "native-base";
+import { UseGetAllAnime } from "./getAllAnimeQuery";
+import AnimeList from "./AnimeList";
 
 const Home = () => {
-  // //change the limit to however many images to use
-  // const url = `https://api.thecatapi.com/v1/images/search?limit=20`;
-  // const api_key =
-  //   "live_qZ3LT5DkmLUgtqAJrMM6oboG1aV4HCBjjKvW7w4lNCPBF07sCnjSIRd1rbMi58ya";
+  const { data, isLoading } = UseGetAllAnime();
 
-  // fetch(url, {
-  //   headers: {
-  //     "x-api-key": api_key,
-  //   },
-  // })
-  //   .then((response) => {
-  //     return response.json();
-  //   })
-  //   .then((data) => {
-  //     let imagesData = data;
-  //     imagesData.map(function (imageData) {
-  //       let image = document.createElement("img");
-  //       //use the url from the image object
-  //       image.src = `${imageData.url}`;
+  const renderItem = ({ item }) => {
+    return (
+      <Box px="4" pt="4">
+        <Box px="4" pt="4">
+          {item.title}
+        </Box>
+        <Box px="4" pt="4">
+          {item.duration}
+        </Box>
+        <Box px="4" pt="4">
+          {item.score}
+        </Box>
+        <Text
+          style={{
+            textDecorationLine: "underline",
+            color: "blue",
+            onHover: "pointer",
+          }}
+          onPress={() => Linking.openURL(item.trailer.url)}
+        >
+          {item.trailer.url}
+        </Text>
+        <Image
+          source={{ uri: item.images.jpg.image_url }}
+          style={{ width: 500, height: 250 }}
+        />
+      </Box>
+    );
+  };
 
-  //       let gridCell = document.createElement("div");
-  //       gridCell.classList.add("col");
-  //       gridCell.classList.add("col-lg");
-  //       gridCell.appendChild(image);
-
-  //       document.getElementById("grid").appendChild(gridCell);
-  //     });
-  //   })
-  //   .catch(function (error) {
-  //     console.log(error);
-  //   });
   return (
     <Box border="1" borderRadius="md">
       <VStack space="4" divider={<Divider />}>
         <Box px="4" pt="4">
           NativeBase
         </Box>
-        <Box px="4">
-          NativeBase is a free and open source framework that enable developers
-          to build high-quality mobile apps using React Native iOS and Android
-          apps with a fusion of ES6.
-        </Box>
         <Box px="4" pb="4">
-          GeekyAnts
+          {isLoading ? (
+            <Box px="4" pb="4">
+              Loading...
+            </Box>
+          ) : data && data.data.length > 0 ? (
+            <FlatList
+              data={data.data} // Use data.data as the data source
+              renderItem={renderItem} // Pass the renderItem function directly
+              keyExtractor={(item) => item.id} // Convert item.id to string
+            />
+          ) : (
+            <Box px="4" pb="4">
+              Whoops, no data available.
+            </Box>
+          )}
         </Box>
       </VStack>
     </Box>

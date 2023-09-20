@@ -2,14 +2,18 @@ import React from "react";
 import { SafeAreaView, StyleSheet, Text } from "react-native";
 import Navigation from "./src/navigation";
 import { NativeBaseProvider } from "native-base";
+import { QueryClient, QueryClientProvider } from "react-query";
 
+const queryClient = new QueryClient();
 const App = () => {
   return (
-    <NativeBaseProvider>
-      <SafeAreaView style={styles.root}>
-        <Navigation />
-      </SafeAreaView>
-    </NativeBaseProvider>
+    <QueryClientProvider client={queryClient}>
+      <NativeBaseProvider>
+        <SafeAreaView style={styles.root}>
+          <Navigation />
+        </SafeAreaView>
+      </NativeBaseProvider>
+    </QueryClientProvider>
   );
 };
 
